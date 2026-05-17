@@ -11,12 +11,12 @@
 using System;
 using System.Reflection;
 
-[assembly: System.Reflection.AssemblyCompanyAttribute("IceCreamEShop.Web")]
+[assembly: System.Reflection.AssemblyCompanyAttribute("IceCreamEShop.Service")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+497a1c54055007f6c95c0f1e9f8778ec689c3521")]
-[assembly: System.Reflection.AssemblyProductAttribute("IceCreamEShop.Web")]
-[assembly: System.Reflection.AssemblyTitleAttribute("IceCreamEShop.Web")]
+[assembly: System.Reflection.AssemblyProductAttribute("IceCreamEShop.Service")]
+[assembly: System.Reflection.AssemblyTitleAttribute("IceCreamEShop.Service")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
 
 // 由 MSBuild WriteCodeFragment 類別產生。
