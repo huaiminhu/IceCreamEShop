@@ -6,4 +6,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\IceCreamEShop.Core\IceCreamEShop.Core.csproj" />
+    <ProjectReference Include="..\IceCreamEShop.Service\IceCreamEShop.Service.csproj" />
+  </ItemGroup>
+
 </Project>

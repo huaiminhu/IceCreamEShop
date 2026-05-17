@@ -11,4 +11,8 @@
     <Folder Include="Repositories\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\IceCreamEShop.Core\IceCreamEShop.Core.csproj" />
+  </ItemGroup>
+
 </Project>
