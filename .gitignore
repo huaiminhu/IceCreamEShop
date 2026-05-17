@@ -1,0 +1,10 @@
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.log
+*.nupkg
+packages/
+*.DS_Store
+appsettings.*.json
