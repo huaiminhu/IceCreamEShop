@@ -1,4 +1,10 @@
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+
+var connString = builder.Configuration.GetConnectionString("DefaultConnection");
+//builder.Services.AddDbContext<EShopDbCntxt>(options =>
+//    options.UseSqlServer(connString));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
