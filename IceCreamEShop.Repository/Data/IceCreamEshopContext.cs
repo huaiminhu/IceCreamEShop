@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using IceCreamEShop.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace IceCreamEShop.Core.Entities;
+namespace IceCreamEShop.Repository.Data;
 
-public partial class IceCreamEshopContext : DbContext
+public partial class IceCreamEShopContext : DbContext
 {
-    public IceCreamEshopContext()
+    public IceCreamEShopContext()
     {
     }
 
-    public IceCreamEshopContext(DbContextOptions<IceCreamEshopContext> options)
+    public IceCreamEShopContext(DbContextOptions<IceCreamEShopContext> options)
         : base(options)
     {
     }
@@ -20,8 +21,6 @@ public partial class IceCreamEshopContext : DbContext
     public virtual DbSet<OrderInfo> OrderInfos { get; set; }
 
     public virtual DbSet<OrderItem> OrderItems { get; set; }
-
-    public virtual DbSet<Payment> Payments { get; set; }
 
     public virtual DbSet<Product> Products { get; set; }
 
@@ -53,9 +52,11 @@ public partial class IceCreamEshopContext : DbContext
 
         modelBuilder.Entity<OrderInfo>(entity =>
         {
-            entity.HasKey(e => e.OrderInfoId).HasName("PK__OrderInf__36170B25ECDB428E");
+            entity.HasKey(e => e.OrderInfoId).HasName("PK__OrderInf__36170B25728DC99B");
 
             entity.ToTable("OrderInfo");
+
+            entity.Property(e => e.PaymentProvider).HasMaxLength(20);
 
             entity.HasOne(d => d.UserAccount).WithMany(p => p.OrderInfos)
                 .HasForeignKey(d => d.UserAccountId)
@@ -80,20 +81,6 @@ public partial class IceCreamEshopContext : DbContext
                 .HasConstraintName("OI_Product");
         });
 
-        modelBuilder.Entity<Payment>(entity =>
-        {
-            entity.HasKey(e => e.PaymentId).HasName("PK__Payment__9B556A3861091713");
-
-            entity.ToTable("Payment");
-
-            entity.Property(e => e.PaymentProvider).HasMaxLength(20);
-
-            entity.HasOne(d => d.OrderInfo).WithMany(p => p.Payments)
-                .HasForeignKey(d => d.OrderInfoId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("P_OrderInfo");
-        });
-
         modelBuilder.Entity<Product>(entity =>
         {
             entity.HasKey(e => e.ProductId).HasName("PK__Product__B40CC6CD7E0ABE75");
@@ -108,28 +95,38 @@ public partial class IceCreamEshopContext : DbContext
 
         modelBuilder.Entity<ShoppingCart>(entity =>
         {
-            entity.HasKey(e => e.ShoppingCartId).HasName("PK__Shopping__7A789AE4E49238CF");
+            entity.HasKey(e => e.ShoppingCartId).HasName("PK__Shopping__7A789AE412D13276");
 
             entity.ToTable("ShoppingCart");
 
-            entity.HasOne(d => d.UserAccount).WithMany(p => p.ShoppingCarts)
-                .HasForeignKey(d => d.UserAccountId)
+            entity.HasIndex(e => e.UserAccountId, "UQ__Shopping__DA6C709BF6418F1E").IsUnique();
+
+            entity.HasOne(d => d.UserAccount).WithOne(p => p.ShoppingCart)
+                .HasForeignKey<ShoppingCart>(d => d.UserAccountId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("SC_UserAccount");
         });
 
         modelBuilder.Entity<UserAccount>(entity =>
         {
-            entity.HasKey(e => e.UserAccountId).HasName("PK__UserAcco__DA6C709A22E6A719");
+            entity.HasKey(e => e.UserAccountId).HasName("PK__UserAcco__DA6C709AB47A8ABA");
 
             entity.ToTable("UserAccount");
 
-            entity.HasIndex(e => new { e.UserName, e.Email }, "UQ__UserAcco__836F940539E01DF3").IsUnique();
+            entity.HasIndex(e => e.Email, "uq_useraccount_email").IsUnique();
 
-            entity.Property(e => e.Email).HasMaxLength(50);
+            entity.Property(e => e.Createdat)
+                .HasDefaultValueSql("(sysutcdatetime())")
+                .HasColumnName("createdat");
+            entity.Property(e => e.Email).HasMaxLength(256);
             entity.Property(e => e.EnPassword).HasMaxLength(255);
+            entity.Property(e => e.Isactive)
+                .HasDefaultValue(true)
+                .HasColumnName("isactive");
             entity.Property(e => e.PhoneNumber).HasMaxLength(20);
-            entity.Property(e => e.UserName).HasMaxLength(20);
+            entity.Property(e => e.Updatedat).HasColumnName("updatedat");
+            entity.Property(e => e.UserName).HasMaxLength(50);
+            entity.Property(e => e.UserRole).HasDefaultValue(1);
 
             entity.HasMany(d => d.Products).WithMany(p => p.UserAccounts)
                 .UsingEntity<Dictionary<string, object>>(

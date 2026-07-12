@@ -1,0 +1,31 @@
+﻿@model IceCreamEShop.Web.ViewModels.LoginViewModel
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "登入";
+}
+<form method="post" asp-controller="UserAccount" asp-action="LogIn">
+    <div class="form-group">
+        <label>Email: </label>
+        <br>
+        <input asp-for="Email" class="w-25 form-control">
+        <br>
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <br>
+    <div class="form-group">
+        <label>密碼: </label>
+        <br>
+        <input type="password" asp-for="Passwd" class="w-25 form-control">
+        <br>
+        <span asp-validation-for="Passwd" class="text-danger"></span>
+    </div>
+    <br>
+    <button type="submit">登入</button>
+</form>
+<br>
+<a asp-controller="UserAccount" asp-action="Register">還沒註冊嗎?</a>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

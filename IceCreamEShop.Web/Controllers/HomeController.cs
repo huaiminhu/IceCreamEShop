@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using IceCreamEShop.Service.Services.IServices;
 using IceCreamEShop.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,6 +20,11 @@ namespace IceCreamEShop.Web.Controllers
         }
 
         public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        public IActionResult Admin()
         {
             return View();
         }

@@ -9,9 +9,13 @@ public partial class OrderInfo
 
     public int UserAccountId { get; set; }
 
-    public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+    public int PaymentAmount { get; set; }
 
-    public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
+    public string PaymentProvider { get; set; } = null!;
+
+    public int PaymentStatus { get; set; }
+
+    public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 
     public virtual UserAccount UserAccount { get; set; } = null!;
 }

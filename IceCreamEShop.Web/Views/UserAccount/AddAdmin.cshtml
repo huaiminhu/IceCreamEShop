@@ -1,0 +1,43 @@
+﻿@model IceCreamEShop.Web.ViewModels.RegisterViewModel
+@{
+    ViewData["Title"] = "註冊";
+    TempData["SuccessMessage"] = "";
+}
+<form method="post" asp-controller="UserAccount" asp-action="AddAdmin">
+    <div class="form-group">
+        <label>Email: </label>
+        <br>
+        <input asp-for="Email" class="w-25 form-control">
+        <br>
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <br>
+    <div class="form-group">
+        <label>密碼: </label>
+        <br>
+        <input asp-for="Passwd" class="w-25 form-control">
+        <br>
+        <span asp-validation-for="Passwd" class="text-danger"></span>
+    </div>
+    <br>
+    <div class="form-group">
+        <label>姓名: </label>
+        <br>
+        <input asp-for="UserName" class="w-25 form-control">
+        <br>
+        <span asp-validation-for="UserName" class="text-danger"></span>
+    </div>
+    <br>
+    <div class="form-group">
+        <label>連絡電話/手機: </label>
+        <br>
+        <input asp-for="PhoneNumber" class="w-25 form-control">
+        <br>
+        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+    </div>
+    <br>
+    <button type="submit">註冊</button>
+</form>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
