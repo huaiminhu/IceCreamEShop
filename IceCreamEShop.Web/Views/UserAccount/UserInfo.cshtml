@@ -1,0 +1,198 @@
+﻿@using IceCreamEShop.Web.ViewModels.UserAccount
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "帳戶資訊";
+}
+@model UserViewModel
+
+<form id="accountForm"  method="post" asp-controller="UserAccount" asp-action="UpdateUser">
+    <div class="form-group">
+        <label>Email: </label>
+        <br>
+        <input asp-for="Email" class="w-25 form-control" readonly>
+    </div>
+    <br>
+    <div class="form-group">
+        <label>姓名: </label>
+        <br>
+        <input asp-for="UserName" class="w-25 form-control" readonly>
+        <br>
+        <span asp-validation-for="UserName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label>連絡電話/手機: </label>
+        <br>
+        <input asp-for="PhoneNumber" class="w-25 form-control" readonly>
+        <br>
+        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+    </div>
+    <br>
+    <button type="button" id="btnEditSubmit" class="btn btn-primary">更改帳戶資訊</button>
+    <br>
+    <button type="button" id="btnEditCancel" class="btn btn-warning d-none">取消更新</button>
+</form>
+<br>
+<form id="changepwForm" method="post" asp-controller="UserAccount" asp-action="ChangePasswd">
+    <div class="form-group">
+        <label>原始密碼: </label>
+        <br>
+        <input type="password" asp-for="CurrentPasswd" class="w-25 form-control" readonly>
+        <br>
+        <span asp-validation-for="CurrentPasswd" class="text-danger"></span>
+    </div>
+    <br>
+    <div class="form-group">
+        <label>新密碼: </label>
+        <br>
+        <input type="password" asp-for="NewPasswd" class="w-25 form-control" readonly>
+        <br>
+        <span asp-validation-for="NewPasswd" class="text-danger"></span>
+    </div>
+    <br>
+    <div class="form-group">
+        <label>再次輸入新密碼: </label>
+        <br>
+        <input type="password" asp-for="ComfirmPasswd" class="w-25 form-control" readonly>
+        <br>
+        <span asp-validation-for="ComfirmPasswd" class="text-danger"></span>
+    </div>
+    <button type="button" id="btnChangeSubmit" class="btn btn-secondary">更改密碼</button>
+    <br>
+    <button type="button" id="btnChangeCancel" class="btn btn-warning d-none">取消更新</button>
+</form>
+<br>
+<form id="deleteForm" method="post" asp-controller="UserAccount" asp-action="DeleteUser">
+    <button type="button" id="btnDeleteSubmit" class="btn btn-danger">刪除帳戶</button>
+</form>
+
+@section Scripts {
+    <script src="https://jquery.com"></script>
+    <script>
+        $(document).ready(function () {
+            // false 代表目前是唯讀狀態
+            let isEditing = false;
+            let isChanging = false;
+
+            $("#btnEditSubmit").click(function () {
+                if (!isEditing) {
+                    $("#btnEditCancel").removeClass("d-none");
+                    // 點擊「更改帳戶資訊」解除唯讀
+                    $("#accountForm input").not("#Email").removeAttr("readonly"); // 移除 readonly (排除Email)
+                    $(this).text("儲存"); // 切換按鈕文字
+                    isEditing = true;
+                } else {
+                    // 點擊「儲存」將發送 AJAX 到後端
+
+                    // 序列化表單資料
+                    let formData = $("#accountForm").serialize();
+                    let url = $("#accountForm").attr("action");
+                    let token = $('input[name="__RequestVerificationToken"]').val();
+                    $.ajax({
+                        url: url,
+                        type: "POST",
+                        data: formData,
+                        headers: {
+                            "RequestVerificationToken": token
+                        },
+                        success: function (response) {
+                            alert("更新成功！");
+                            $("#btnEditCancel").addClass("d-none");
+                            // 恢復成唯讀狀態
+                            $("#accountForm input").attr("readonly", true);
+                            $("#btnEditSubmit").text("更改帳戶資訊");
+                            isEditing = false;
+                            // 強制重新整理網頁，讓導覽列顯示新名字
+                            window.location.reload();
+                        },
+                        error: function (xhr) {
+                            let errorMsg = xhr.responseText;
+                            alert("更新失敗！錯誤原因: " + errorMsg);
+                            console.error("詳細錯誤資訊:", xhr);
+                        }
+                    });
+                }
+            });
+
+            $("#btnEditCancel").click(function(){
+                $("#btnEditCancel").addClass("d-none");
+                $("#accountForm input").attr("readonly", true);
+                $("#btnEditSubmit").text("更改帳戶資訊");
+                isEditing = false;
+            });
+
+            $("#btnChangeSubmit").click(function(){
+                if(!isChanging){
+                    $("#btnChangeCancel").removeClass("d-none");
+                    $("#changepwForm input").removeAttr("readonly");
+                    $(this).text("儲存");
+                    isChanging = true;
+                }else{
+                    let newData = $("#changepwForm").serialize();
+                    let newUrl = $("#changepwForm").attr("action");
+                    let newToken = $('input[name="__RequestVerificationToken"]').val();
+                    $.ajax({
+                        url: newUrl, 
+                        type: "POST", 
+                        data: newData,
+                        headers: {
+                            "RequestVerificationToken": newToken
+                        },
+                        success: function(){
+                            alert("密碼更改成功！");
+                            $("#btnChangeCancel").addClass("d-none");
+                            $("#changepwForm input").attr("readonly", true);
+                            $(this).text("更改密碼");
+                            isChanging = false;
+                        }, 
+                        error: function(xhr){
+                            var message = xhr.responseText;
+                            alert("更新失敗！錯誤原因: " + message);
+                            console.error("詳細錯誤資訊:", xhr);
+                        }
+                    });
+                }
+            });
+
+            $("#btnChangeCancel").click(function(){
+                $("#btnChangeCancel").addClass("d-none");
+                $("#changepwForm input").attr("readonly", true);
+                $("#btnChangeSubmit").text("更改密碼");
+                isChanging = false;
+            });
+
+            $("#btnDeleteSubmit").click(function(){
+                if(!confirm("確定刪除帳戶？")){
+                    return;
+                }
+
+                let url = $("#deleteForm").attr("action");
+                let token = $('input[name="__RequestVerificationToken"]').val();
+                
+                //發送請求前禁用按鈕，避免重複點擊
+                let $btn = $(this);
+                $btn.prop("disabled", true).text("處理中...");
+                
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    headers: {
+                        "RequestVerificationToken": token
+                    },
+                    success: function(){
+                        alert("已完成刪除帳戶");
+                        window.location.href = "/Home/Index";
+                    },
+                    error: function(xhr){
+                        var message = xhr.responseText;
+                        alert("刪除失敗！失敗原因: " + message);
+                        console.error("詳細錯誤資訊:", xhr);
+                    }
+                });
+                
+            });
+
+        });
+    </script>
+}

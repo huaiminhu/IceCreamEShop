@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace IceCreamEShop.Core.DTOs.UserAccount
 {
-    public class RegisterResponseDto
+    public class UpdateUserDto
     {
-        public string Message { get; set; } = null!;
-        public bool IsSuccess { get; set; } = false;
+        public int UserAccountId { get; set; }
+        public string UserName { get; set; } = null!;
+        public string? PhoneNumber { get; set; } 
     }
 }

@@ -2,12 +2,14 @@
 using IceCreamEShop.Core.DTOs.UserAccount;
 using IceCreamEShop.Core.Enums;
 using IceCreamEShop.Service.Services.IServices;
-using IceCreamEShop.Web.ViewModels;
+using IceCreamEShop.Web.ViewModels.UserAccount;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace IceCreamEShop.Web.Controllers
 {
@@ -162,6 +164,109 @@ namespace IceCreamEShop.Web.Controllers
 
             TempData["SuccessMessage"] = response.Message;
             return RedirectToAction("Login");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> UserInfo()
+        {
+            if (int.TryParse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, out int userId))
+            {
+                var user = await _userAccountService.GetUserAsync(userId);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                var userModel = _mapper.Map<UserViewModel>(user);
+                return View(userModel);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateUser(UpdateUserViewModel model)
+        {
+            if (!ModelState.IsValid) {
+                return BadRequest();
+            }
+            var dto = _mapper.Map<UpdateUserDto>(model);
+            if (int.TryParse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, out int userId))
+            {
+                dto.UserAccountId = userId;
+                var result = await _userAccountService.UpdateUserAsync(dto);
+                if (result < 1)
+                {
+                    return BadRequest();
+                }
+
+                // 重新發行 Cookie 以更新畫面的名字
+                var identity = (ClaimsIdentity)User.Identity;
+
+                // 移除舊的姓名宣告
+                var existingNameClaim = identity.FindFirst(ClaimTypes.Name);
+                if (existingNameClaim != null) identity.RemoveClaim(existingNameClaim);
+
+                // 加入新的姓名宣告（使用前端傳入或資料庫最新的名字）
+                identity.AddClaim(new Claim(ClaimTypes.Name, model.UserName));
+
+                // 重新寫入瀏覽器 Cookie
+                var principal = new ClaimsPrincipal(identity);
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+                return Ok();
+            }
+            else{
+                return BadRequest();
+            }  
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePasswd(ChangePasswdViewModel model)
+        {
+            if (!ModelState.IsValid || model.CurrentPasswd == model.NewPasswd || model.NewPasswd != model.ComfirmPasswd)
+            {
+                return BadRequest();
+            }
+            var dto = _mapper.Map<ChangePasswdDto>(model);
+            if (int.TryParse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, out int userId))
+            {
+                dto.UserAccountId = userId;
+                var result = await _userAccountService.ChangePasswordAsync(dto);
+                if (result < 1)
+                {
+                    return BadRequest();
+                }
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteUser()
+        {
+            if (int.TryParse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, out int userId))
+            {
+                var result = await _userAccountService.DeleteUserAsync(userId);
+                if (result < 1)
+                {
+                    return BadRequest();
+                }
+                // 刪除成功後，清除登入 Cookie
+                await HttpContext.SignOutAsync();
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
     }
 }

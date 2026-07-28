@@ -17,6 +17,10 @@ namespace IceCreamEShop.Service.Profiles
             CreateMap<UserAccount, LoginResponseDto>()
             .ForMember(dto => dto.UserRole,
             tool => tool.MapFrom(ent => ((UserRole)ent.UserRole).ToString()));
+            CreateMap<UserAccount, UserDto>()
+            .ForMember(dto => dto.UserRole,
+            tool => tool.MapFrom(ent => ((UserRole)ent.UserRole).ToString()));
+            CreateMap<RegisterRequestDto, UserAccount>();
         }
     }
 }

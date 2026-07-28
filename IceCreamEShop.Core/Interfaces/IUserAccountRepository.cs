@@ -10,8 +10,8 @@ namespace IceCreamEShop.Core.Interfaces
         Task<UserAccount?> GetByEmailAsync(string email);
         Task<bool> IsEmailUniqueAsync(string email);
 
-        Task<int?> AddAsync(string hashedPassword, RegisterRequestDto requestDto, UserRole role);
-        void Update(UserAccount user); 
+        void Create(UserAccount user);
+        void Update(UserAccount user);
         void Delete(UserAccount user);
     }
 }

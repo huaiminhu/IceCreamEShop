@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using IceCreamEShop.Core.DTOs.UserAccount;
-using IceCreamEShop.Web.ViewModels;
+using IceCreamEShop.Web.ViewModels.UserAccount;
 
 namespace IceCreamEShop.Web.Profiles
 {
@@ -10,6 +10,9 @@ namespace IceCreamEShop.Web.Profiles
         {
             CreateMap<LoginViewModel, LoginRequestDto>();
             CreateMap<RegisterViewModel, RegisterRequestDto>();
+            CreateMap<UpdateUserViewModel, UpdateUserDto>();
+            CreateMap<ChangePasswdViewModel, ChangePasswdDto>();
+            CreateMap<UserDto, UserViewModel>();
         }
     }
 }

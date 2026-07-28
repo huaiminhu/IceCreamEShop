@@ -39,28 +39,9 @@ namespace IceCreamEShop.Repository.Repositories
             return !exists;
         }
 
-        public async Task<int?> AddAsync(string hashedPassword, RegisterRequestDto requestDto, UserRole role)
+        public void Create(UserAccount user)
         {
-            var emailParam = new SqlParameter("@Email", requestDto.Email);
-            var passwdParam = new SqlParameter("@EnPassword", hashedPassword); 
-            var userNameParam = new SqlParameter("@UserName", requestDto.UserName);
-            var phoneParam = new SqlParameter("@PhoneNumber", requestDto.PhoneNumber);
-            var roleParam = new SqlParameter("@UserRole", role);
-            var isActiveParam = new SqlParameter("@IsActive", true);
-
-            var outputIdParam = new SqlParameter
-            {
-                ParameterName = "@NewUserAccountId",
-                SqlDbType = SqlDbType.Int,
-                Direction = ParameterDirection.Output
-            };
-
-            await _context.Database.ExecuteSqlRawAsync(
-                "EXEC dbo.usp_CreateUserAccount @Email, @EnPassword, @UserName, @PhoneNumber, @UserRole, @IsActive, @NewUserAccountId OUTPUT",
-                emailParam, passwdParam, userNameParam, phoneParam, roleParam, isActiveParam, outputIdParam
-            );
-
-            return (int)outputIdParam.Value;
+            _context.UserAccounts.Add(user);
         }
 
         public void Update(UserAccount user)

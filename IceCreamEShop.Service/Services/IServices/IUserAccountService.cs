@@ -18,6 +18,18 @@ namespace IceCreamEShop.Service.Services.IServices
 
         // 新增後臺管理/系統管理員
         Task<RegisterResponseDto> CreateUserByAdminAsync(RegisterRequestDto request, UserRole currentRole, UserRole targetRole);
+
+        // 讀取使用者資訊
+        Task<UserDto?> GetUserAsync(int id);
+
+        // 更新使用者資訊
+        Task<int> UpdateUserAsync(UpdateUserDto userDto);
+
+        // 更換密碼
+        Task<int> ChangePasswordAsync(ChangePasswdDto passwdDto);
+
+        // 移除使用者資訊
+        Task<int> DeleteUserAsync(int id);
     }
 
 }
