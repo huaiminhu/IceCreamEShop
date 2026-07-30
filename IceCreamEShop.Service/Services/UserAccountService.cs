@@ -52,9 +52,6 @@ namespace IceCreamEShop.Service.Services
             var user = _mapper.Map<UserAccount>(request);
             // 密碼雜湊處理
             user.EnPassword = BCrypt.Net.BCrypt.HashPassword(request.Passwd);
-            user.UserRole = 0;
-            user.Createdat = DateTime.Now;
-            user.Isactive = true;
             _unitOfWork.UserAccounts.Create(user);
             var result = await _unitOfWork.CompleteAsync();
             if (result < 1)
@@ -82,8 +79,6 @@ namespace IceCreamEShop.Service.Services
             var user = _mapper.Map<UserAccount>(request);
             user.EnPassword = BCrypt.Net.BCrypt.HashPassword(request.Passwd);
             user.UserRole = 1;
-            user.Createdat = DateTime.Now;
-            user.Isactive = true;
             _unitOfWork.UserAccounts.Create(user);
             var result = await _unitOfWork.CompleteAsync();
             if (result < 1)

@@ -126,7 +126,6 @@ public partial class IceCreamEShopContext : DbContext
             entity.Property(e => e.PhoneNumber).HasMaxLength(20);
             entity.Property(e => e.Updatedat).HasColumnName("updatedat");
             entity.Property(e => e.UserName).HasMaxLength(50);
-            entity.Property(e => e.UserRole).HasDefaultValue(1);
 
             entity.HasMany(d => d.Products).WithMany(p => p.UserAccounts)
                 .UsingEntity<Dictionary<string, object>>(

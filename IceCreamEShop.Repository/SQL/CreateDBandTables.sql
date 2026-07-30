@@ -19,7 +19,7 @@ CREATE TABLE UserAccount (
     EnPassword NVARCHAR(255) NOT NULL,  
     Username NVARCHAR(50) NOT NULL,                      
     PhoneNumber NVARCHAR(20) NULL,    
-    UserRole INT NOT NULL DEFAULT 1,   
+    UserRole INT NOT NULL DEFAULT 0,   
     IsActive BIT NOT NULL DEFAULT 1,  
     CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(), 
     UpdatedAt DATETIME2 NULL,     

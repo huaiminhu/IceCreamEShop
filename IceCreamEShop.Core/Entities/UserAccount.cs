@@ -17,7 +17,7 @@ public partial class UserAccount
 
     public int UserRole { get; set; }
 
-    public bool Isactive { get; set; }
+    public bool Isactive { get; set; } = true;
 
     public DateTime Createdat { get; set; }
 
