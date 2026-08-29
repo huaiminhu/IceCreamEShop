@@ -1,8 +1,69 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@using IceCreamEShop.Core.Common
+@using IceCreamEShop.Web.ViewModels.Product
+@model PageObject<ProductViewModel>
+@{
+    ViewData["Title"] = "線上冰店";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="row pb-3">
+    @foreach (var product in Model.Items)
+    {
+        <div class="col-lg-3 col-sm-6">
+            <div class="row p-2">
+                <div class="col-12 p-1">
+                    <div class="card border-0 p-3 shadow  border-top border-5 rounded">
+                        <img src="@product.ProductPicUrl" class="card-img-top rounded" />
+                        <div class="card-body pb-0">
+                            <div class="pl-1">
+                                <p class="card-title h5 text-dark opacity-75 text-uppercase text-center">@product.ProductName</p>
+                            </div>
+                        </div>
+                        <div>
+                            <a asp-action="ProductInfo" asp-controller="Product"
+                               asp-route-id="@product.ProductId"
+                               class="btn btn-primary bg-gradient border-0 form-control">
+                                商品詳細資訊
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 </div>
+@{
+    int totalPages = Model.TotalCount / Model.PageSize;
+    if (Model.TotalCount % Model.PageSize > 0)
+    {
+        totalPages += 1;
+    }
+    bool hasPrevious = Model.PageNumber > 1;
+    bool hasNext = Model.PageNumber < totalPages;
+}
+
+@if (totalPages > 0)
+{
+    <nav aria-label="Page navigation" class="d-flex justify-content-center mt-4">
+        <ul class="pagination">
+
+            <!-- 上一頁 -->
+            <li class="page-item @(hasPrevious ? "" : "disabled")">
+                <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageNumber - 1)">上一頁</a>
+            </li>
+
+            <!-- 頁碼數字 -->
+            @for (int i = 1; i <= totalPages; i++)
+            {
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@i">@i</a>
+                </li>
+            }
+
+            <!-- 下一頁 -->
+            <li class="page-item @(hasNext ? "" : "disabled")">
+                <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageNumber + 1)">下一頁</a>
+            </li>
+
+        </ul>
+    </nav>
+}

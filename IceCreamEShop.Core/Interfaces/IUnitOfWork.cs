@@ -9,6 +9,7 @@ namespace IceCreamEShop.Core.Interfaces
     public interface IUnitOfWork
     {
         IUserAccountRepository UserAccounts { get; }
+        IProductRepository Products { get; }
 
         Task<int> CompleteAsync();
     }

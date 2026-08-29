@@ -1,0 +1,141 @@
+﻿@using IceCreamEShop.Web.ViewModels.Product
+@{
+    ViewData["Title"] = "商品頁";
+}
+@model ProductViewModel
+
+<form id="productUpdateForm" method="post" asp-controller="Product" asp-action="UpdateProduct" enctype="multipart/form-data">
+    <input asp-for="ProductId" hidden />
+    <div class="form-group">
+        <label>產品名稱: </label>
+        <br>
+        <input asp-for="ProductName" class="w-25 form-control" readonly>
+        <br>
+        <span asp-validation-for="ProductName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        @if (!string.IsNullOrEmpty(Model.ProductPicUrl))
+        {
+            <img id="productImage" src="@Url.Content(Model.ProductPicUrl)" alt="商品圖片" style="max-width: 200px; display: block; margin-bottom: 10px;" />
+        }
+        <input type="file" id="updateProductPic" asp-for="ProductPicUrl" name="ProductPic" class="w-25 form-control" hidden>
+        <span asp-validation-for="ProductPicUrl" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label>產品類別: </label>
+        <br>
+        <input asp-for="Category" class="w-25 form-control" readonly>
+        <br>
+        <span asp-validation-for="Category" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label>產品描述: </label>
+        <br>
+        <textarea asp-for="ProductDescription" rows="5" class="w-25 form-control" readonly></textarea>
+        <br>
+        <span asp-validation-for="ProductDescription" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label>產品價格: </label>
+        <br>
+        <input asp-for="ProductPrice" class="w-25 form-control" readonly>
+        <br>
+        <span asp-validation-for="ProductPrice" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label>產品數量: </label>
+        <br>
+        <input asp-for="Quantity" class="w-25 form-control" readonly>
+        <br>
+        <span asp-validation-for="Quantity" class="text-danger"></span>
+    </div>
+    <button type="button" id="btnforUpdate" class="btn btn-info">更新商品資訊</button>
+    <br>
+    <button type="button" id="btnUpdateCancel" class="btn btn-warning d-none">取消更新</button>
+</form>
+
+<form id="productDeleteForm" method="post" asp-controller="Product" asp-action="DeleteProduct">
+    <button type="button" id="btnforDelete" class="btn btn-danger">刪除商品</button>
+</form>
+
+@section Scripts{
+    <script src="https://jquery.com"></script>
+    <script>
+        $(document).ready(function(){
+
+            let isEditing = false;
+
+            $("#btnforUpdate").click(function(){
+                if(!isEditing){
+                    $("#btnUpdateCancel").removeClass("d-none");
+                    $("#productUpdateForm input").removeAttr("readonly");
+                    $("#updateProductPic").removeAttr("hidden");
+                    $("#productUpdateForm textarea").removeAttr("readonly");
+                    $(this).text("儲存更新");
+                    isEditing = true;
+                }else{
+
+                    let formElement = $("#productUpdateForm")[0];
+                    let formData = new FormData(formElement);
+
+                    let url = $("#productUpdateForm").attr("action");
+
+                    $.ajax({
+                        url : url, 
+                        type : "POST", 
+                        data : formData, 
+                        processData: false,  // 設為 false告訴 jQuery 不要處理發送的資料
+                        contentType: false,  // 告訴 jQuery 不要設定 Content-Type 標頭
+                        success : function(response){
+                            if(response.newPicUrl){
+                                $("#productImage").attr("src", response.newPicUrl + "?t=" + new Date().getTime()).show();
+                            }
+                            alert(response.message);
+                            $("#btnUpdateCancel").addClass("d-none");
+                            $("#productUpdateForm input").attr("readonly", true);
+                            $("#updateProductPic").attr("hidden", true);
+                            $("#productUpdateForm textarea").attr("readonly", true);
+                            $("#btnforUpdate").text("更新商品資訊");
+                            isEditing = false;
+                        }, 
+                        error : function(xhr){
+                            alert("更新失敗！失敗原因：" + xhr.resposeText);
+                        }
+                    })
+                }
+            });
+
+            $("#btnUpdateCancel").click(function(){
+                $(this).addClass("d-none");
+                $("#productUpdateForm input").attr("readonly", true);
+                $("#updateProductPic").attr("hidden", true);
+                $("#productUpdateForm textarea").attr("readonly", true);
+                $("#btnforUpdate").text("更新商品資訊");
+                isEditing = false;
+            });
+
+            $("#btnforDelete").click(function(){
+                if(!confirm("確定刪除商品？")){
+                    return;
+                }
+
+                let url = $("#productDeleteForm").attr("action");
+                let productId = $("#ProductId").val();
+
+                $.ajax({
+                    url: url, 
+                    type: "POST",
+                    data: {productId : productId}, 
+                    success: function(response){
+                        alert(response.message);
+                        window.location.href = "/Home/Index";
+                    }, 
+                    error: function(xhr){
+                        alert("刪除失敗！原因：" + xhr.responseText);
+                    }
+                })
+            });
+
+        });
+    </script>
+}

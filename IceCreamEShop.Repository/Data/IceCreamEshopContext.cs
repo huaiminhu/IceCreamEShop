@@ -87,7 +87,7 @@ public partial class IceCreamEShopContext : DbContext
 
             entity.ToTable("Product");
 
-            entity.Property(e => e.Category).HasMaxLength(30);
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysutcdatetime())");
             entity.Property(e => e.ProductDescription).HasMaxLength(255);
             entity.Property(e => e.ProductName).HasMaxLength(50);
             entity.Property(e => e.ProductPicUrl).HasMaxLength(255);

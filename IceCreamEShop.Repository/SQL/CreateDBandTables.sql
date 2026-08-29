@@ -6,11 +6,14 @@ GO
 CREATE TABLE Product ( 
 	ProductId INT PRIMARY KEY IDENTITY, 
 	ProductName NVARCHAR(50) NOT NULL, 
-	Category NVARCHAR(30) NOT NULL, 
+	Category INT NOT NULL DEFAULT 0,  
 	ProductDescription NVARCHAR(255) NOT NULL, 
 	ProductPrice INT NOT NULL, 
 	ProductPicUrl NVARCHAR(255) NOT NULL, 
-	Quantity INT NOT NULL 
+	Quantity INT NOT NULL,  
+	IsPublished BIT DEFAULT 0 NOT NULL,  
+	CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(), 
+    UpdatedAt DATETIME2 NULL
 ); 
 
 CREATE TABLE UserAccount (

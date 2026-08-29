@@ -15,9 +15,11 @@ namespace IceCreamEShop.Repository.Repositories
         {
             _context = context;
             UserAccounts = new UserAccountRepository(_context);
+            Products = new ProductRepository(_context);
         }
 
         public IUserAccountRepository UserAccounts { get; private set; }
+        public IProductRepository Products { get; set; }
 
         public async Task<int> CompleteAsync()
         {

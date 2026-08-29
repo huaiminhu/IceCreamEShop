@@ -9,7 +9,7 @@ public partial class Product
 
     public string ProductName { get; set; } = null!;
 
-    public string Category { get; set; } = null!;
+    public int Category { get; set; }
 
     public string ProductDescription { get; set; } = null!;
 
@@ -18,6 +18,12 @@ public partial class Product
     public string ProductPicUrl { get; set; } = null!;
 
     public int Quantity { get; set; }
+
+    public bool IsPublished { get; set; }
+
+    public DateTime CreatedAt { get; set; }
+
+    public DateTime? UpdatedAt { get; set; }
 
     public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
 
