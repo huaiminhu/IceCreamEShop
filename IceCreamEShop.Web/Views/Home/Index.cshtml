@@ -51,7 +51,7 @@
                 <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageNumber - 1)">上一頁</a>
             </li>
 
-            <!-- 頁碼數字 -->
+            <!-- 頁碼 -->
             @for (int i = 1; i <= totalPages; i++)
             {
                 <li class="page-item @(i == Model.PageNumber ? "active" : "")">
