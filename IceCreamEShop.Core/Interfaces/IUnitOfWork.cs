@@ -10,6 +10,8 @@ namespace IceCreamEShop.Core.Interfaces
     {
         IUserAccountRepository UserAccounts { get; }
         IProductRepository Products { get; }
+        IShoppingCartRepository ShoppingCarts { get; }
+        ICartItemRepository CartItems { get; }
 
         Task<int> CompleteAsync();
     }

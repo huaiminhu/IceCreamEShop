@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using IceCreamEShop.Core.DTOs.CartItem;
 using IceCreamEShop.Core.DTOs.Product;
 using IceCreamEShop.Core.Entities;
 using IceCreamEShop.Core.Enums;

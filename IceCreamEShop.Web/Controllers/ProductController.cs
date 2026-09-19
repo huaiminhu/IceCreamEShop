@@ -24,6 +24,18 @@ namespace IceCreamEShop.Web.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> DisplayProduct(int id)
+        {
+            var dto = await _productService.GetProductAsync(id);
+            if (dto == null)
+            {
+                return NotFound("商品不存在！");
+            }
+            var model = _mapper.Map<DisplayProductViewModel>(dto);
+            return View(model);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> ProductInfo(int id)
         {
             var dto = await _productService.GetProductAsync(id);

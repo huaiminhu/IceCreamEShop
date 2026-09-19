@@ -1,0 +1,77 @@
+﻿@{
+    ViewData["Title"] = "線上冰店 - 購物車";
+}
+@using IceCreamEShop.Web.ViewModels.Product
+@model IEnumerable<DisplayProductViewModel>
+
+@foreach (var product in Model)
+{
+    <div class="cart_item" id="item_@product.ProductId">
+        <div class="col-lg-3 col-sm-6">
+            <div class="row p-2">
+                <div class="col-12 p-1">
+                    <div class="card border-0 p-3 shadow  border-top border-5 rounded">
+                        <img src="@product.ProductPicUrl" class="card-img-top rounded" />
+                        <div class="card-body pb-0">
+                            <div class="pl-1">
+                                <p class="card-title h5 text-dark opacity-75 text-uppercase text-center">@product.ProductName</p>
+                            </div>
+                            <div>購買數量
+                                <input type="number" id="quantity_@product.ProductId" value="@product.Quantity">
+                            </div>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="isRemove_@product.ProductId" data-product-id="@product.ProductId">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<form id="removeItem" method="post" asp-controller="ShoppingCart" asp-action="RemoveItem">
+    <button type="button" id="removeItemBtn" class="btn btn-warning">從購物車移除商品</button>
+</form>
+
+@section Scripts{
+    <script src="https://jquery.com"></script>
+    <script>
+        $("#document").ready(function(){
+            
+                $("#removeItemBtn").click(function(){
+                    var its = [];
+                   $("input[id^='isRemove_']:checked").each(function(){
+                       var productId = $(this).data("product-id");
+                       var quantity = parseInt($("#quantity_"+productId).val());
+                       its.push({ProductId: productId, Quantity: quantity});
+                       });
+                   if (its.length === 0) {
+                        alert("請至少選擇一個商品！");
+                        return;
+                   }
+                   var url = $("#removeItem").attr("action");
+                   $.ajax({
+                        url: url, 
+                        type: 'POST',
+                        contentType: 'application/json', // 告訴後端這是 JSON
+                        data: JSON.stringify(its),    // 將 JavaScript 陣列轉成 JSON 字串
+                        success: function(response) {
+                            if(response.success > 0) {
+                                alert(response.message);
+                                // 將已被勾選刪除的商品從網頁上移除
+                                its.forEach(function(item) {
+                                    $("#item_" + item.ProductId).fadeOut(300, function(){
+                                        $(this).remove();
+                                    });
+                                });
+                            }
+                        },
+                        error: function(xhr) {
+                            alert("移除失敗！"+xhr.responseText);
+                        }
+                    });
+                });
+        }); 
+    </script>
+}

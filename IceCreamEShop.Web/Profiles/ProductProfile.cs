@@ -11,6 +11,7 @@ namespace IceCreamEShop.Web.Profiles
             CreateMap<CreateProductViewModel, ProductDto>();
             CreateMap<UpdateProductViewModel, UpdateProductDto>();
             CreateMap<ProductDto, ProductViewModel>();
+            CreateMap<ProductDto, DisplayProductViewModel>();
         }
     }
 }

@@ -1,10 +1,6 @@
-﻿using IceCreamEShop.Core.Interfaces;
+﻿using IceCreamEShop.Core.Entities;
+using IceCreamEShop.Core.Interfaces;
 using IceCreamEShop.Repository.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IceCreamEShop.Repository.Repositories
 {
@@ -16,10 +12,14 @@ namespace IceCreamEShop.Repository.Repositories
             _context = context;
             UserAccounts = new UserAccountRepository(_context);
             Products = new ProductRepository(_context);
+            ShoppingCarts = new ShoppingCartRepository(_context);
+            CartItems = new CartItemRepository(_context);
         }
 
         public IUserAccountRepository UserAccounts { get; private set; }
         public IProductRepository Products { get; set; }
+        public IShoppingCartRepository ShoppingCarts { get; set; }
+        public ICartItemRepository CartItems { get; set; }
 
         public async Task<int> CompleteAsync()
         {

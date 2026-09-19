@@ -4,6 +4,7 @@ using IceCreamEShop.Core.Interfaces;
 using IceCreamEShop.Repository.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace IceCreamEShop.Repository.Repositories
 {
