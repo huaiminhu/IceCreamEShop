@@ -21,19 +21,19 @@ namespace IceCreamEShop.Repository.Repositories
 
         public async Task<UserAccount?> GetByIdAsync(int id)
         {
-            return await _context.UserAccounts
+            return await _context.UserAccounts.AsNoTracking()
                 .FirstOrDefaultAsync(u => u.UserAccountId == id);
         }
 
         public async Task<UserAccount?> GetByEmailAsync(string email)
         {
-            return await _context.UserAccounts
+            return await _context.UserAccounts.AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Email == email);
         }
 
         public async Task<bool> IsEmailUniqueAsync(string email)
         {
-            bool exists = await _context.UserAccounts
+            bool exists = await _context.UserAccounts.AsNoTracking()
                 .AnyAsync(u => u.Email == email);
 
             return !exists;

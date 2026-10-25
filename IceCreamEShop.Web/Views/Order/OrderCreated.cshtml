@@ -1,0 +1,116 @@
+﻿@using IceCreamEShop.Web.ViewModels.Order
+@{
+    ViewData["Title"] = "線上冰店 - 訂單資訊";
+}
+@model GetOrderViewModel
+
+@if (Model.OrderItems != null)
+{
+    foreach (var product in Model.OrderItems)
+    {
+        <div class="cart_item" 
+            id="item_@product.OrderItem.ProductId" 
+            data-name="@product.OrderItem.ProductName"
+            data-price="@product.OrderItem.ProductPrice">
+            <div class="col-lg-3 col-sm-6">
+                <div class="row p-2">
+                    <div class="col-12 p-1">
+                        <div class="card border-0 p-3 shadow  border-top border-5 rounded">
+                            <img src="@product.OrderItem.ProductPicUrl" class="card-img-top rounded" />
+                            <div class="card-body pb-0">
+                                <div class="pl-1">
+                                    <p class="card-title h5 text-dark opacity-75 text-uppercase text-center">@product.OrderItem.ProductName</p>
+                                </div>
+                                <div>
+                                    購買數量
+                                    <input type="number" class="item-quantity" id="quantity_@product.OrderItem.ProductId" value="@product.ItemQuantity">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+<form id="paymentForm" method="post" asp-controller="Order" asp-action="Payment">
+    <input type="hidden" id="orderId" value="@Model.OrderInfoId" />
+    <input type="hidden" id="amount" value="@Model.PaymentAmount" />
+    <div class="payment-options">
+        <h3>請選擇付款方式</h3>
+
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="radio" name="PaymentMethod" id="linePay" value="LinePay" checked>
+            <label class="form-check-label" for="linePay">
+                <img src="https://line-apps.com" alt="LINE Pay" height="30">
+                LINE Pay 
+            </label>
+        </div>
+
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="radio" name="PaymentMethod" id="byCash" value="byCash">
+            <label class="form-check-label" for="byCash">
+                現金付款
+            </label>
+        </div>
+    </div>
+
+    <button type="button" id="goToPay" class="btn btn-primary btn-lg w-100">
+        確認前往付款
+    </button>
+</form>
+
+@section Scripts{
+    <script src="https://jquery.com"></script>
+    <script>
+        $("#document").ready(function(){
+            $("#goToPay").click(function(){
+                var amount = $("#amount").val();
+                var orderId = $("#orderId").val();
+                if($('#linePay').is(':checked')){
+                    var package = [];
+                    var packageItems = [];
+                    $(".cart_item").each(function(){
+                        var name = $(this).data("data-name");
+                        var price = $(this).data("data-price");
+                        var quantity = parseInt($(this).find(".item-quantity").val());
+                        packageItems.push({
+                            Name: name, 
+                            Price: price, 
+                            Quantity: quantity
+                        });
+                    });
+                    package.push({Id: $("#orderId").val(),
+                        Amount: $("#amount").val(),
+                        Products: packageItems});
+                    var provider = "Line Pay";
+                    var url = $("paymentForm").attr("action");
+                }
+
+                $.ajax({
+                        url: url,
+                        type: 'POST',
+                        data: {
+                            Amount: amount,
+                            OrderId: orderId,
+                            Packages: package,
+                            Provider: provider
+                        },
+                        contentType: 'application/json',
+                        success: function(response){
+                            if(response.redirectUrl){
+                                window.location.href = response.redirectUrl;
+                            }else{
+                                alert(response.message);
+                            }
+                        },
+                        error: function(xhr){
+                            alert("付款失敗！" + xhr.responseText)
+                        }
+                 });
+
+            });
+        });
+    </script>
+}

@@ -11,7 +11,7 @@ namespace IceCreamEShop.Core.Interfaces
     {
         Task<List<CartItem>?> GetItemsByCartAsync(int shoppingCartId);
         void Create(CartItem cartItem);
-        void Delete(List<CartItem> cartItems);
+        void Delete(CartItem cartItem);
         Task<CartItem?> GetItemAsync(int shoppingCartId, int productId);
     }
 }

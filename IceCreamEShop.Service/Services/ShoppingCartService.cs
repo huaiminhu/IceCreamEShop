@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using IceCreamEShop.Core.DTOs.CartItem;
 using IceCreamEShop.Core.DTOs.Product;
+using IceCreamEShop.Core.DTOs.ShoppingCart;
 using IceCreamEShop.Core.Entities;
 using IceCreamEShop.Core.Interfaces;
 using IceCreamEShop.Service.Services.IServices;
@@ -56,7 +57,7 @@ namespace IceCreamEShop.Service.Services
             return result;
         }
 
-        public async Task<List<ProductDto>?> GetCartItemsAsync(int userAccountId)
+        public async Task<GetCartDto?> GetCartAsync(int userAccountId)
         {
             var cart = await _unitOfWork.ShoppingCarts.GetByAccountIdAsync(userAccountId);
             if(cart == null)
@@ -68,7 +69,8 @@ namespace IceCreamEShop.Service.Services
             {
                 return null;
             }
-            var response = new List<ProductDto>();
+            var cartItemsDto = new List<DisplayItemDto>();
+            int totalPrice = 0;
             foreach (var it in cartItems)
             {
                 var product = await _unitOfWork.Products.GetByIdAsync(it.ProductId);
@@ -76,11 +78,16 @@ namespace IceCreamEShop.Service.Services
                 {
                     return null;
                 }
+                var dto = new DisplayItemDto();
                 var productDto = _mapper.Map<ProductDto>(product);
-                productDto.Quantity = it.Quantity;
-                response.Add(productDto);
+                dto.DisplayedItem = productDto;
+                dto.ItemQuantity = it.Quantity;
+                totalPrice += (it.Quantity * productDto.ProductPrice);
+                cartItemsDto.Add(dto);
             }
-            return response;
+            var cartDto = _mapper.Map<GetCartDto>(cart);
+            cartDto.CartItems = cartItemsDto;
+            return cartDto;
         }
 
         public async Task<int> PutItemsAwayFromCartAsync(int userAccountId, List<RemoveItemDto> dto)
@@ -90,7 +97,7 @@ namespace IceCreamEShop.Service.Services
             {
                 return 0;
             }
-            var cartItems = new List<CartItem>();
+            
             foreach(var it in dto)
             {
                 var product = await _unitOfWork.Products.GetByIdAsync(it.ProductId);
@@ -106,10 +113,9 @@ namespace IceCreamEShop.Service.Services
                 {
                     return 0;
                 }
-                cartItems.Add(cartItem);
+                _unitOfWork.CartItems.Delete(cartItem);
             }
             
-            _unitOfWork.CartItems.Delete(cartItems);
             return await _unitOfWork.CompleteAsync();
         }
     }

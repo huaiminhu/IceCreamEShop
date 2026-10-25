@@ -3,6 +3,7 @@ using IceCreamEShop.Core.DTOs.CartItem;
 using IceCreamEShop.Service.Services.IServices;
 using IceCreamEShop.Web.ViewModels.CartItem;
 using IceCreamEShop.Web.ViewModels.Product;
+using IceCreamEShop.Web.ViewModels.ShoppingCart;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IceCreamEShop.Web.Controllers
@@ -28,12 +29,12 @@ namespace IceCreamEShop.Web.Controllers
             {
                 return BadRequest();
             }
-            var cart = await _shoppingCartService.GetCartItemsAsync(userId);
+            var cart = await _shoppingCartService.GetCartAsync(userId);
             if (cart == null)
             {
                 return BadRequest();
             }
-            var model = _mapper.Map<List<DisplayProductViewModel>>(cart);
+            var model = _mapper.Map<GetCartViewModel>(cart);
             return View(model);
         }
 

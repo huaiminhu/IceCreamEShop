@@ -17,19 +17,19 @@ namespace IceCreamEShop.Repository.Repositories
             _context.CartItems.Add(cartItem);
         }
 
-        public void Delete(List<CartItem> cartItems)
+        public void Delete(CartItem cartItem)
         {
-            _context.CartItems.RemoveRange(cartItems);
+            _context.CartItems.Remove(cartItem);
         }
 
         public async Task<List<CartItem>?> GetItemsByCartAsync(int shoppingCartId)
         {
-            return await _context.CartItems.Where(cis => cis.ShoppingCartId == shoppingCartId).ToListAsync();
+            return await _context.CartItems.AsNoTracking().Where(cis => cis.ShoppingCartId == shoppingCartId).ToListAsync();
         }
 
         public async Task<CartItem?> GetItemAsync(int shoppingCartId, int productId)
         {
-            return await _context.CartItems.SingleOrDefaultAsync(c => c.ShoppingCartId == shoppingCartId && c.ProductId == productId);
+            return await _context.CartItems.AsNoTracking().SingleOrDefaultAsync(c => c.ShoppingCartId == shoppingCartId && c.ProductId == productId);
         }
     }
 }

@@ -1,0 +1,30 @@
+﻿@using IceCreamEShop.Web.ViewModels.Order
+@{
+    ViewData["Title"] = "線上冰店 - 我的訂單";
+}
+@model IEnumerable<UserOrderViewModel>
+
+@foreach (var order in Model)
+{
+    <div id="resultContainer" class="mt-4" style="display:none;">
+        <div class="card">
+            <div class="card-body">
+                <h3>訂單資訊</h3>
+                <p>金額：@order.PaymentAmount</p>
+                @if(order.PaymentStatus == 1)
+                {
+                    <p>付款狀態：已付款</p>
+                }
+                else
+                {
+                    <p>付款狀態：未付款</p>
+                }
+            </div>
+            <a asp-action="OrderCreated" asp-controller="Order"
+               asp-route-id="@order.OrderInfoId"
+               class="btn btn-primary bg-gradient border-0 form-control">
+                訂單詳細資訊
+            </a>
+        </div>
+    </div>
+}

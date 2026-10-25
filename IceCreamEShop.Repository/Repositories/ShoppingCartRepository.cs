@@ -21,7 +21,7 @@ namespace IceCreamEShop.Repository.Repositories
 
         public async Task<ShoppingCart?> GetByAccountIdAsync(int userAccountId)
         {
-            return await _context.ShoppingCarts.FirstOrDefaultAsync(c => c.UserAccountId == userAccountId);
+            return await _context.ShoppingCarts.AsNoTracking().FirstOrDefaultAsync(c => c.UserAccountId == userAccountId);
         }
     }
 }

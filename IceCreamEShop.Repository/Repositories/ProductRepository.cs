@@ -48,7 +48,7 @@ namespace IceCreamEShop.Repository.Repositories
 
         public async Task<Product?> GetByIdAsync(int id)
         {
-            return await _context.Products
+            return await _context.Products.AsNoTracking()
                 .FirstOrDefaultAsync(p => p.ProductId == id);
         }
 

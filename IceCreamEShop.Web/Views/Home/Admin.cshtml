@@ -1,5 +1,77 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewData["Title"] = "線上冰店 - 門店管理員首頁";
+}
+@using IceCreamEShop.Web.ViewModels.Order
+@model UnpaidOrderViewModel
+
+<form id="unpaidOrderQueryForm" method="post" asp-controller="Order" asp-action="DisplayUnpaidOrder">
+    <div class="form-group">
+        <label>未付款訂單查詢: </label>
+        <br>
+        <input asp-for="PhoneNumber" class="w-25 form-control" placeholder="請輸入顧客電話號碼">
+        <br>
+        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+    </div>
+    <button id="goSearchOrder" type="button" class="btn btn-info"></button>
+</form>
+
+<div id="resultContainer" class="mt-4" style="display:none;">
+    <div class="card">
+        <div class="card-body">
+            <h3>訂單資訊</h3>
+            <input type="hidden" id="resOrderId" value="" />
+            <p>顧客名稱：<span id="resUserName"></span></p>
+            <p>電話號碼：<span id="resPhoneNumber"></span></p>
+            <p>金額：<span id="resAmount"></span></p>
+        </div>
+        <form id="paymentForm" method="post" asp-controller="Order" asp-action="PayByCash">
+            <button type="button" id="goToPay" class="btn btn-primary btn-lg w-100">
+                點此完成付款
+            </button>
+        </form>
+    </div>
+</div>
+<div id="errorMsg" class="text-danger mt-2"></div>
+
+@section Script{
+    <script src="https://jquery.com"></script>
+    <script>
+        $(document).ready(function(){
+            $("#goSearchOrder").click(function(){
+                var phoneNumber = $("#PhoneNumber").val();
+                var searchUrl = $("#unpaidOrderQueryForm").attr("action");
+                $.ajax({
+                    url: searchUrl,
+                    type: "GET",
+                    data: phoneNumber,
+                    success: function(response){
+                        $("#resOrderId").val(response.OrderInfoId);
+                        $('#resUserName').text(response.UserName);
+                        $('#resPhoneNumber').text(response.PhoneNumber);
+                        $('#resAmount').text(response.PaymentAmount);
+                        $('#resultContainer').show();
+                    },
+                    error: function(xhr){
+                        alert(xhr.responseText);
+                    }
+                });
+            });
+
+            $("#goToPay").click(function(){
+                var orderId = $("#resOrderId").val();
+                var payUrl = $("#paymentForm").attr("action");
+                $.ajax({
+                    url: payUrl, 
+                    type: "POST", 
+                    data: orderId, 
+                    success: function(response){
+                        alert(response.message)
+                    }, 
+                    error: function(xhr){
+                        alert(xhr.responseText);
+                    }
+                });
+            });
+        });
+    </script>
 }

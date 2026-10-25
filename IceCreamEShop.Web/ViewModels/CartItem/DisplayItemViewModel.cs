@@ -1,11 +1,11 @@
-﻿namespace IceCreamEShop.Web.ViewModels.CartItem
+﻿using IceCreamEShop.Web.ViewModels.Product;
+
+namespace IceCreamEShop.Web.ViewModels.CartItem
 {
     public class DisplayItemViewModel
     {
-        public int ProductId { get; set; }
-        public int Quantity { get; set; }
-        public string ProductName { get; set; } = null!;
-        public int ProductPrice { get; set; }
-        public string ProductPicUrl { get; set; } = null!;
+        public DisplayProductViewModel DisplayedItem { get; set; } = null!;
+        public int ItemQuantity { get; set; }
+        public int TotalPrice { get; set; }
     }
 }

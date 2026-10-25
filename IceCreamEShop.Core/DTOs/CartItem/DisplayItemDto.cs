@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IceCreamEShop.Core.DTOs.Product;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,10 +9,7 @@ namespace IceCreamEShop.Core.DTOs.CartItem
 {
     public class DisplayItemDto
     {
-        public int ProductId { get; set; }
-        public int Quantity { get; set; }
-        public string ProductName { get; set; } = null!;
-        public int ProductPrice { get; set; }
-        public string ProductPicUrl { get; set; } = null!;
+        public ProductDto DisplayedItem { get; set; } = null!;
+        public int ItemQuantity { get; set; }
     }
 }

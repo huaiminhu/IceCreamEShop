@@ -1,37 +1,49 @@
 ﻿@{
     ViewData["Title"] = "線上冰店 - 購物車";
 }
-@using IceCreamEShop.Web.ViewModels.Product
-@model IEnumerable<DisplayProductViewModel>
+@using IceCreamEShop.Web.ViewModels.ShoppingCart
+@model GetCartViewModel
 
-@foreach (var product in Model)
+@if (Model.CartItems != null)
 {
-    <div class="cart_item" id="item_@product.ProductId">
-        <div class="col-lg-3 col-sm-6">
-            <div class="row p-2">
-                <div class="col-12 p-1">
-                    <div class="card border-0 p-3 shadow  border-top border-5 rounded">
-                        <img src="@product.ProductPicUrl" class="card-img-top rounded" />
-                        <div class="card-body pb-0">
-                            <div class="pl-1">
-                                <p class="card-title h5 text-dark opacity-75 text-uppercase text-center">@product.ProductName</p>
+    foreach (var product in Model.CartItems)
+    {
+        <div class="cart_item" id="item_@product.DisplayedItem.ProductId">
+            <div class="col-lg-3 col-sm-6">
+                <div class="row p-2">
+                    <div class="col-12 p-1">
+                        <div class="card border-0 p-3 shadow  border-top border-5 rounded">
+                            <img src="@product.DisplayedItem.ProductPicUrl" class="card-img-top rounded" />
+                            <div class="card-body pb-0">
+                                <div class="pl-1">
+                                    <p class="card-title h5 text-dark opacity-75 text-uppercase text-center">@product.DisplayedItem.ProductName</p>
+                                </div>
+                                <div>
+                                    購買數量
+                                    <input type="number" id="quantity_@product.DisplayedItem.ProductId" value="@product.ItemQuantity">
+                                </div>
                             </div>
-                            <div>購買數量
-                                <input type="number" id="quantity_@product.ProductId" value="@product.Quantity">
+                            <div>
+                                <input type="checkbox" id="isRemove_@product.DisplayedItem.ProductId" data-product-id="@product.DisplayedItem.ProductId">
                             </div>
-                        </div>
-                        <div>
-                            <input type="checkbox" id="isRemove_@product.ProductId" data-product-id="@product.ProductId">
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    }
 }
 
 <form id="removeItem" method="post" asp-controller="ShoppingCart" asp-action="RemoveItem">
     <button type="button" id="removeItemBtn" class="btn btn-warning">從購物車移除商品</button>
+</form>
+
+<div>
+    總金額: @Model.TotalPrice
+</div>
+
+<form method="post" asp-controller="Order" asp-action="CreateOrder" id="createOrderBtn" class="btn btn-info">
+    前往結帳
 </form>
 
 @section Scripts{
@@ -57,7 +69,7 @@
                         contentType: 'application/json', // 告訴後端這是 JSON
                         data: JSON.stringify(its),    // 將 JavaScript 陣列轉成 JSON 字串
                         success: function(response) {
-                            if(response.success > 0) {
+                            if(response.message) {
                                 alert(response.message);
                                 // 將已被勾選刪除的商品從網頁上移除
                                 its.forEach(function(item) {
@@ -69,6 +81,39 @@
                         },
                         error: function(xhr) {
                             alert("移除失敗！"+xhr.responseText);
+                        }
+                    });
+                });
+
+                $("#createOrderBtn").click(function(){
+                    var orderItems = [];
+                    $(".cart_item").each(function() {
+                       var productId = $(this).data("product-id");
+                       var quantity = parseInt($("#quantity_"+productId).val());
+                        orderItems.push({
+                            ProductId: parseInt(productId),
+                            Quantity: quantity
+                        });
+                    });
+                    var postData = {
+                        UserAccountId: model.UserAccountId,
+                        PaymentAmount: model.TotalPrice,
+                        OrderItems: orderItems
+                    };
+                    var createOrderUrl = $("#createOrderBtn").attr("action");
+                    $.ajax({
+                        url: createOrderUrl, 
+                        type: 'POST', 
+                        data: postData,
+                        contentType: 'application/json',
+                        success: function(response){
+                            if(response.successful){
+                                alert(response.message);
+                                window.location.href = "/Order/OrderCreated";
+                            }
+                        }, 
+                        error: function(xhr){
+                            alert("訂單不成立！" + xhr.responseText);
                         }
                     });
                 });
